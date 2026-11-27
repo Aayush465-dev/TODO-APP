@@ -18,7 +18,16 @@ jobs:
         run: |
           SETTINGS=$(find . -name settings.gradle -not -path "*/node_modules/*" | head -n 1)
           if [ -z "$SETTINGS" ]; then
-            echo "::error::settings.gradle not found. Upload the CONTENTS of the zip (settings.gradle, app/, scripts/, .github/ ...) to the repo."
+            ZIP=$(find . -maxdepth 3 -iname "*.zip" -not -path "./.git/*" | head -n 1)
+            if [ -n "$ZIP" ]; then
+              echo "No project files found - unzipping $ZIP"
+              mkdir -p _project
+              unzip -q -o "$ZIP" -d _project
+              SETTINGS=$(find _project -name settings.gradle | head -n 1)
+            fi
+          fi
+          if [ -z "$SETTINGS" ]; then
+            echo "::error::settings.gradle not found, and no usable zip file in the repo."
             find . -maxdepth 3 -not -path "./.git/*" | head -50
             exit 1
           fi
