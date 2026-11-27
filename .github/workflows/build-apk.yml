@@ -27,10 +27,7 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      # Optional: bundle the JS libraries so the app also works offline
-      - name: Download libraries for offline use
-        run: bash scripts/fetch-libs.sh
-
+    
       - name: Build signed APK
         run: gradle --no-daemon assembleRelease
 
